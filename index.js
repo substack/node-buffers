@@ -154,3 +154,29 @@ Buffers.prototype.slice = function (i, j) {
     
     return target;
 };
+
+Buffers.prototype.get = function get (i) {
+    if (i < 0 || i >= this.length) throw new Error('oob');
+    var l = i, bi = 0, bu = null;
+    for (;;) {
+        bu = this.buffers[bi++];
+        if (l < bu.length) {
+            return bu.get(l);
+        } else {
+            l -= bu.length;
+        }
+    }
+};
+
+Buffers.prototype.set = function set (i, b) {
+  if (i < 0 || i >= this.length) throw new Error('oob');
+    var l = i, bi = 0, bu = null;
+    for (;;) {
+        bu = this.buffers[bi++];
+        if (l < bu.length) {
+            return bu.set(l, b);
+        } else {
+            l -= bu.length;
+        }
+    }
+};

@@ -1,5 +1,5 @@
 var assert = require('assert');
-var Buffers = require('buffers');
+var Buffers = require('../');
 
 function create (xs, split) {
     var bufs = Buffers();
@@ -151,4 +151,33 @@ exports.unshift = function () {
         [].slice.call(bufs.slice()),
         [0,1,2,3,4,5,6,7,8,9]
     );
+};
+
+exports.get = function () {
+    var bufs = Buffers();
+    bufs.unshift(new Buffer([6,7,8,9]));
+    bufs.unshift(new Buffer([4,5]));
+    bufs.unshift(new Buffer([1,2,3]));
+    bufs.unshift(new Buffer([0]));
+    assert.eql( bufs.get(0), 0 );
+    assert.eql( bufs.get(1), 1 );
+    assert.eql( bufs.get(2), 2 );
+    assert.eql( bufs.get(3), 3 );
+    assert.eql( bufs.get(4), 4 );
+    assert.eql( bufs.get(5), 5 );
+    assert.eql( bufs.get(6), 6 );
+    assert.eql( bufs.get(7), 7 );
+    assert.eql( bufs.get(8), 8 );
+    assert.eql( bufs.get(9), 9 );
+};
+
+exports.set = function () {
+    var bufs = Buffers();
+    bufs.push(new Buffer("Hel"));
+    bufs.push(new Buffer("lo"));
+    bufs.push(new Buffer("!"));
+    bufs.set(0, 'h'.charCodeAt(0) );
+    bufs.set(3, 'L'.charCodeAt(0) );
+    bufs.set(5, '.'.charCodeAt(0) );
+    assert.eql( bufs.slice(0).toString(), 'helLo.' );
 };
