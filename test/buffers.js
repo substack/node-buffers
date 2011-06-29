@@ -190,3 +190,20 @@ exports.set = function () {
     bufs.set(5, '.'.charCodeAt(0) );
     assert.eql( bufs.slice(0).toString(), 'helLo.' );
 };
+
+exports.find = function () {
+    var bufs = Buffers();
+    bufs.push(new Buffer("Hel"));
+    bufs.push(new Buffer("lo,"));
+    bufs.push(new Buffer(" how are "));
+    bufs.push(new Buffer("you"));
+    bufs.push(new Buffer("?"));
+    assert.eql( bufs.find("Hello"), 0 );
+    assert.eql( bufs.find("Hello", 1), -1 );
+    assert.eql( bufs.find("ello"), 1 );
+    assert.eql( bufs.find("ello", 1), 1 );
+    assert.eql( bufs.find("ello", 2), -1 );
+    assert.eql( bufs.find("e"), 1 );
+    assert.eql( bufs.find("e", 2), 13 );
+    assert.eql( bufs.find(new Buffer([0x65]), 2), 13 );
+};

@@ -96,3 +96,16 @@ Get a single element at index `i`.
 ----------
 
 Set a single element's value at index `i`.
+
+.find(needle, offset)
+----------
+
+Find a string or buffer `needle` inside the buffer collection. Returns
+the position of the search string or -1 if the search string was not
+found.
+
+Provide an `offset` to skip that number of characters at the beginning
+of the search. This can be used to find additional matches.
+
+This function will return the correct result even if the search string
+is spread out over multiple internal buffers.

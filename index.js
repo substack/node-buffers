@@ -165,28 +165,97 @@ Buffers.prototype.slice = function (i, j) {
     return target;
 };
 
-Buffers.prototype.get = function get (i) {
+Buffers.prototype.pos = function (i) {
     if (i < 0 || i >= this.length) throw new Error('oob');
     var l = i, bi = 0, bu = null;
     for (;;) {
-        bu = this.buffers[bi++];
+        bu = this.buffers[bi];
         if (l < bu.length) {
-            return bu.get(l);
+            return {buf: bi, offset: l};
         } else {
             l -= bu.length;
         }
+        bi++;
     }
 };
 
+Buffers.prototype.get = function get (i) {
+    var pos = this.pos(i);
+
+    return this.buffers[pos.buf].get(pos.offset);
+};
+
 Buffers.prototype.set = function set (i, b) {
-  if (i < 0 || i >= this.length) throw new Error('oob');
-    var l = i, bi = 0, bu = null;
+    var pos = this.pos(i);
+
+    return this.buffers[pos.buf].set(pos.offset, b);
+};
+
+Buffers.prototype.find = function find (needle, offset) {
+    if ("string" === typeof needle) {
+        needle = new Buffer(needle);
+    } else if (needle instanceof Buffer) {
+        // already a buffer
+    } else {
+        throw new Error('Invalid type for a search string');
+    }
+
+    if (!needle.length) {
+        return 0;
+    }
+
+    if (!this.length) {
+        return -1;
+    }
+
+    var i = 0, j = 0, match = 0, mstart, pos = 0;
+
+    // start search from a particular point in the virtual buffer
+    if (offset) {
+        var p = this.pos(offset);
+        i = p.buf;
+        j = p.offset;
+        pos = offset;
+    }
+
+    // for each character in virtual buffer
     for (;;) {
-        bu = this.buffers[bi++];
-        if (l < bu.length) {
-            return bu.set(l, b);
-        } else {
-            l -= bu.length;
+        while (j >= this.buffers[i].length) {
+            j = 0;
+            i++;
+
+            if (i >= this.buffers.length) {
+                // search string not found
+                return -1;
+            }
         }
+
+        var char = this.buffers[i][j];
+
+        if (char == needle[match]) {
+            // keep track where match started
+            if (match == 0) {
+                mstart = {
+                    i: i,
+                    j: j,
+                    pos: pos
+                };
+            }
+            match++;
+            if (match == needle.length) {
+                // full match
+                return mstart.pos;
+            }
+        } else if (match != 0) {
+            // a partial match ended, go back to match starting position
+            // this will continue the search at the next character
+            i = mstart.i;
+            j = mstart.j;
+            pos = mstart.pos;
+            match = 0;
+        }
+
+        j++;
+        pos++;
     }
 };
