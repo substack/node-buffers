@@ -259,3 +259,11 @@ Buffers.prototype.indexOf = function (needle, offset) {
         pos++;
     }
 };
+
+Buffers.prototype.toBuffer = function() {
+    return this.slice();
+}
+
+Buffers.prototype.toString = function(encoding, start, end) {
+    return this.slice(start, end).toString(encoding);
+}
