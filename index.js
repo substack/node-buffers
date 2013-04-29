@@ -1,20 +1,36 @@
+var Buffer = Buffer;
+
+var types = [
+    Int8Array,
+    Int16Array,
+    Int32Array,
+    Uint8Array,
+    Uint16Array,
+    Uint32Array,
+    Float32Array,
+    Float64Array
+];
+
 module.exports = Buffers;
 
-function Buffers (bufs) {
+function Buffers (bufs, type) {
     if (!(this instanceof Buffers)) return new Buffers(bufs);
+    if ((!type && (!isNaN(bufs))) || !isNaN(type)) {
+	type = bufs;
+	bufs = null;
+	Buffer = types[type]
+	this.isNotANodeBuffer = true;
+
+    };
     this.buffers = bufs || [];
     this.length = this.buffers.reduce(function (size, buf) {
         return size + buf.length
     }, 0);
 }
 
-Buffers.prototype.push = function () {
-    for (var i = 0; i < arguments.length; i++) {
-        if (!Buffer.isBuffer(arguments[i])) {
-            throw new TypeError('Tried to push a non-buffer');
-        }
-    }
-    
+
+Buffers.prototype.push = function () {    
+
     for (var i = 0; i < arguments.length; i++) {
         var buf = arguments[i];
         this.buffers.push(buf);
@@ -24,11 +40,7 @@ Buffers.prototype.push = function () {
 };
 
 Buffers.prototype.unshift = function () {
-    for (var i = 0; i < arguments.length; i++) {
-        if (!Buffer.isBuffer(arguments[i])) {
-            throw new TypeError('Tried to unshift a non-buffer');
-        }
-    }
+
     
     for (var i = 0; i < arguments.length; i++) {
         var buf = arguments[i];
@@ -157,9 +169,13 @@ Buffers.prototype.slice = function (i, j) {
             ? Math.min(start + (j - i) - ti, len)
             : len
         ;
-        
-        buffers[ii].copy(target, ti, start, end);
+
+	if(this.isNotANodeBuffer) target.set(buffers[ii].subarray(start, end), ti);
+
+        else buffers[ii].copy(target, ti, start, end);
+
         ti += end - start;
+
     }
     
     return target;
