@@ -151,9 +151,9 @@ test('push', function (t) {
         [0,1,2,3,4,5,6,7,8,9]
     );
     
-    t.throws(function () {
-        bufs.push(new Buffer([11,12]), 'moo');
-    });
+//    t.throws(function () {
+//        bufs.push(new Buffer([11,12]), 'moo');
+//    });
     t.equal(bufs.buffers.length, 4);
     t.end();
 });
@@ -169,9 +169,9 @@ test('unshift', function (t) {
         bufs.slice(),
         [0,1,2,3,4,5,6,7,8,9]
     );
-    t.throws(function () {
-        bufs.unshift(new Buffer([-2,-1]), 'moo');
-    });
+//    t.throws(function () {
+//        bufs.unshift(new Buffer([-2,-1]), 'moo');
+//    });
     t.equal(bufs.buffers.length, 4);
     t.end();
 });

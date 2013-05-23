@@ -1,7 +1,7 @@
 buffers
 =======
 
-Treat a collection of Buffers as a single contiguous partially mutable Buffer.
+Treat a collection of Buffers as a single contiguous partially mutable Buffer or Typed Array.
 
 Where possible, operations execute without creating a new Buffer and copying
 everything over.
@@ -13,6 +13,17 @@ This is a cleaner more Buffery rehash of
 
 example
 =======
+
+with Typed Arrays (Int16Array, et al)
+----------------------------------------------------
+
+pass optional TypedArray constructor specifying which Type d'Array:
+
+```js
+    var Buffers = require('buffers');
+    var bufs = Buffers(Float32Array); // Float32Array is the constructor to use
+    bufs.push(new Float32Array([1,2,3]));
+```
 
 slice
 -----
