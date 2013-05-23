@@ -1,27 +1,30 @@
-var Buffer = Buffer;
+//var pool = require("typedarray-pool");
 
-var types = [
-    Int8Array,
-    Int16Array,
-    Int32Array,
-    Uint8Array,
-    Uint16Array,
-    Uint32Array,
-    Float32Array,
-    Float64Array
-];
+var types = {
+    'Int8Array' : 'int8',
+    'Int16Array' : 'int16',
+    'Int32Array' : 'int32',
+    'Uint8Array' : 'uint8',
+    'Uint16Array' : 'uint16',
+    'Uint32Array' : 'uint32',
+    'Float32Array' : 'float32',
+    'Float64Array' : 'float64'
+};
 
 module.exports = Buffers;
 
-function Buffers (bufs, type) {
-    if (!(this instanceof Buffers)) return new Buffers(bufs);
-    if ((!type && (!isNaN(bufs))) || !isNaN(type)) {
-	type = bufs;
-	bufs = null;
-	Buffer = types[type]
-	this.isNotANodeBuffer = true;
+function Buffers (bufs, type) {  
 
+    if (!(this instanceof Buffers)) return new Buffers(bufs);
+		this.bufferType = 'Buffer'
+    if (!type && (bufs instanceof Function)) { // if bufs is a function, indicating a Typed Array Constructor
+			type = bufs; // set type to bufs
+			bufs = undefined;
     };
+		if(type instanceof Function){ 
+			Buffer = type // redefine the local global global local Buffer as the Typed Array Constructor
+			this.isNotANodeBuffer = true
+		}
     this.buffers = bufs || [];
     this.length = this.buffers.reduce(function (size, buf) {
         return size + buf.length
