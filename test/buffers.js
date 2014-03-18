@@ -221,6 +221,10 @@ test('indexOf', function (t) {
     t.equal( bufs.indexOf("ello", 2), -1 );
     t.equal( bufs.indexOf("e"), 1 );
     t.equal( bufs.indexOf("e", 2), 13 );
+    t.equal( bufs.indexOf("u?"), 17 );
+    t.equal( bufs.indexOf("u?", 4), 17 );
+    t.equal( bufs.indexOf("?"), 18 );
+    t.equal( bufs.indexOf("?", 4), 18 );
     t.equal( bufs.indexOf(new Buffer([0x65]), 2), 13 );
     t.end();
 });

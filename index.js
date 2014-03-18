@@ -220,14 +220,14 @@ Buffers.prototype.indexOf = function (needle, offset) {
 
     // for each character in virtual buffer
     for (;;) {
-        while (j >= this.buffers[i].length) {
+        // if more chars in the search string than are remaining in the buffer
+        if (match === 0 && needle.length > this.length - pos) {
+            return -1;
+        }
+
+        if (j >= this.buffers[i].length) {
             j = 0;
             i++;
-
-            if (i >= this.buffers.length) {
-                // search string not found
-                return -1;
-            }
         }
 
         var char = this.buffers[i][j];
