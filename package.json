@@ -14,5 +14,5 @@
     "devDependencies" : {
         "tap" : "~0.2.4"
     },
-    "license" : "MIT/X11"
+    "license" : "MIT"
 }
