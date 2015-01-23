@@ -194,7 +194,7 @@ Buffers.prototype.set = function set (i, b) {
 Buffers.prototype.indexOf = function (needle, offset) {
     if ("string" === typeof needle) {
         needle = new Buffer(needle);
-    } else if (needle instanceof Buffer) {
+    } else if (Buffer.isBuffer(needle)) {
         // already a buffer
     } else {
         throw new Error('Invalid type for a search string');
