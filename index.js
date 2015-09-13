@@ -14,7 +14,7 @@ Buffers.prototype.push = function () {
             throw new TypeError('Tried to push a non-buffer');
         }
     }
-    
+
     for (var i = 0; i < arguments.length; i++) {
         var buf = arguments[i];
         this.buffers.push(buf);
@@ -29,7 +29,7 @@ Buffers.prototype.unshift = function () {
             throw new TypeError('Tried to unshift a non-buffer');
         }
     }
-    
+
     for (var i = 0; i < arguments.length; i++) {
         var buf = arguments[i];
         this.buffers.unshift(buf);
@@ -46,46 +46,46 @@ Buffers.prototype.splice = function (i, howMany) {
     var buffers = this.buffers;
     var index = i >= 0 ? i : this.length - i;
     var reps = [].slice.call(arguments, 2);
-    
+
     if (howMany === undefined) {
         howMany = this.length - index;
     }
     else if (howMany > this.length - index) {
         howMany = this.length - index;
     }
-    
+
     for (var i = 0; i < reps.length; i++) {
         this.length += reps[i].length;
     }
-    
+
     var removed = new Buffers();
     var bytes = 0;
-    
+
     var startBytes = 0;
     for (
         var ii = 0;
         ii < buffers.length && startBytes + buffers[ii].length < index;
         ii ++
     ) { startBytes += buffers[ii].length }
-    
+
     if (index - startBytes > 0) {
         var start = index - startBytes;
-        
+
         if (start + howMany < buffers[ii].length) {
             removed.push(buffers[ii].slice(start, start + howMany));
-            
+
             var orig = buffers[ii];
             //var buf = new Buffer(orig.length - howMany);
             var buf0 = new Buffer(start);
             for (var i = 0; i < start; i++) {
                 buf0[i] = orig[i];
             }
-            
+
             var buf1 = new Buffer(orig.length - start - howMany);
             for (var i = start + howMany; i < orig.length; i++) {
                 buf1[ i - howMany - start ] = orig[i]
             }
-            
+
             if (reps.length > 0) {
                 var reps_ = reps.slice();
                 reps_.unshift(buf0);
@@ -106,17 +106,17 @@ Buffers.prototype.splice = function (i, howMany) {
             ii ++;
         }
     }
-    
+
     if (reps.length > 0) {
         buffers.splice.apply(buffers, [ ii, 0 ].concat(reps));
         ii += reps.length;
     }
-    
+
     while (removed.length < howMany) {
         var buf = buffers[ii];
         var len = buf.length;
         var take = Math.min(len, howMany - removed.length);
-        
+
         if (take === len) {
             removed.push(buf);
             buffers.splice(ii, 1);
@@ -126,42 +126,42 @@ Buffers.prototype.splice = function (i, howMany) {
             buffers[ii] = buffers[ii].slice(take);
         }
     }
-    
+
     this.length -= removed.length;
-    
+
     return removed;
 };
- 
+
 Buffers.prototype.slice = function (i, j) {
     var buffers = this.buffers;
     if (j === undefined) j = this.length;
     if (i === undefined) i = 0;
-    
+
     if (j > this.length) j = this.length;
-    
+
     var startBytes = 0;
     for (
         var si = 0;
         si < buffers.length && startBytes + buffers[si].length <= i;
         si ++
     ) { startBytes += buffers[si].length }
-    
+
     var target = new Buffer(j - i);
-    
+
     var ti = 0;
     for (var ii = si; ti < j - i && ii < buffers.length; ii++) {
         var len = buffers[ii].length;
-        
+
         var start = ti === 0 ? i - startBytes : 0;
         var end = ti + len >= j - i
             ? Math.min(start + (j - i) - ti, len)
             : len
         ;
-        
+
         buffers[ii].copy(target, ti, start, end);
         ti += end - start;
     }
-    
+
     return target;
 };
 
@@ -182,13 +182,13 @@ Buffers.prototype.pos = function (i) {
 Buffers.prototype.get = function get (i) {
     var pos = this.pos(i);
 
-    return this.buffers[pos.buf].get(pos.offset);
+    return this.buffers[pos.buf][pos.offset];
 };
 
 Buffers.prototype.set = function set (i, b) {
     var pos = this.pos(i);
 
-    return this.buffers[pos.buf].set(pos.offset, b);
+    return this.buffers[pos.buf][pos.offset] = b;
 };
 
 Buffers.prototype.indexOf = function (needle, offset) {

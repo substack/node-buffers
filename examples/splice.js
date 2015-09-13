@@ -1,4 +1,4 @@
-var Buffers = require('buffers');
+var Buffers = require('../');
 var bufs = Buffers([
     new Buffer([1,2,3]),
     new Buffer([4,5,6,7]),
