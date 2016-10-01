@@ -182,7 +182,7 @@ Buffers.prototype.pos = function (i) {
 Buffers.prototype.get = function get (i) {
     var pos = this.pos(i);
 
-    return this.buffers[pos.buf].get(pos.offset);
+    return this.buffers[pos.buf][pos.offset];
 };
 
 Buffers.prototype.set = function set (i, b) {
